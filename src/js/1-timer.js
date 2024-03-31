@@ -1,4 +1,3 @@
-// Функція для підрахунку різниці між датами
 function getTimeRemaining(endtime) {
   const total = Date.parse(endtime) - Date.parse(new Date());
   const seconds = Math.floor((total / 1000) % 60);
@@ -23,21 +22,17 @@ function updateTimer() {
   function updateClock() {
     const t = getTimeRemaining(deadline);
 
-    timer.querySelector('[data-days]').textContent = t.days
-      .toString()
-      .padStart(2, '0');
-    timer.querySelector('[data-hours]').textContent = t.hours
-      .toString()
-      .padStart(2, '0');
-    timer.querySelector('[data-minutes]').textContent = t.minutes
-      .toString()
-      .padStart(2, '0');
-    timer.querySelector('[data-seconds]').textContent = t.seconds
-      .toString()
-      .padStart(2, '0');
+    timer.querySelector('[data-days]').textContent = addLeadingZero(t.days);
+    timer.querySelector('[data-hours]').textContent = addLeadingZero(t.hours);
+    timer.querySelector('[data-minutes]').textContent = addLeadingZero(
+      t.minutes
+    );
+    timer.querySelector('[data-seconds]').textContent = addLeadingZero(
+      t.seconds
+    );
 
     if (t.total <= 0) {
-      clearInterval(timeinterval);
+      clearInterval(timeinterval); // Зупиняємо таймер
     }
   }
 
@@ -66,7 +61,11 @@ const options = {
     // Перевірка обраної дати
     if (userSelectedDate < currentDate) {
       // Якщо обрана дата у минулому
-      window.alert('Please choose a date in the future');
+      iziToast.error({
+        title: 'Error',
+        message: 'Please choose a date in the future',
+        position: 'topRight',
+      });
       document.querySelector('[data-start]').disabled = true; // Робимо кнопку "Start" неактивною
     } else {
       // Якщо обрана дата у майбутньому
@@ -109,21 +108,20 @@ document.querySelector('[data-start]').addEventListener('click', function () {
     const timeRemaining = convertMs(timeDiff);
 
     // Оновлення відображення таймера
-    document.querySelector('[data-days]').textContent = timeRemaining.days
-      .toString()
-      .padStart(2, '0');
-    document.querySelector('[data-hours]').textContent = timeRemaining.hours
-      .toString()
-      .padStart(2, '0');
-    document.querySelector('[data-minutes]').textContent = timeRemaining.minutes
-      .toString()
-      .padStart(2, '0');
-    document.querySelector('[data-seconds]').textContent = timeRemaining.seconds
-      .toString()
-      .padStart(2, '0');
+    document.querySelector('[data-days]').textContent = addLeadingZero(
+      timeRemaining.days
+    );
+    document.querySelector('[data-hours]').textContent = addLeadingZero(
+      timeRemaining.hours
+    );
+    document.querySelector('[data-minutes]').textContent = addLeadingZero(
+      timeRemaining.minutes
+    );
+    document.querySelector('[data-seconds]').textContent = addLeadingZero(
+      timeRemaining.seconds
+    );
 
     // Перевірка на завершення таймера
-
     if (timeDiff <= 0) {
       clearInterval(timerInterval); // Зупиняємо таймер
       document.querySelector('[data-start]').disabled = false; // Активуємо кнопку "Start"
