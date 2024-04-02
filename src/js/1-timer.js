@@ -1,3 +1,4 @@
+// Функція для підрахунку різниці між датами
 function getTimeRemaining(endtime) {
   const total = Date.parse(endtime) - Date.parse(new Date());
   const seconds = Math.floor((total / 1000) % 60);
@@ -15,8 +16,7 @@ function getTimeRemaining(endtime) {
 }
 
 // Функція для оновлення таймера
-function updateTimer() {
-  const deadline = document.getElementById('datetime-picker').value;
+function updateTimer(deadline) {
   const timer = document.querySelector('.timer');
 
   function updateClock() {
@@ -32,7 +32,7 @@ function updateTimer() {
     );
 
     if (t.total <= 0) {
-      clearInterval(timeinterval); // Зупиняємо таймер
+      clearInterval(timeinterval); // Зупинка таймера
     }
   }
 
@@ -41,7 +41,12 @@ function updateTimer() {
 }
 
 // Обробник події кліку на кнопці Start
-document.querySelector('[data-start]').addEventListener('click', updateTimer);
+document.querySelector('[data-start]').addEventListener('click', function () {
+  const deadline = document.getElementById('datetime-picker').value;
+  updateTimer(deadline);
+  document.querySelector('[data-start]').disabled = true;
+  document.getElementById('datetime-picker').disabled = true;
+});
 
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
@@ -78,71 +83,6 @@ const options = {
 flatpickr('#datetime-picker', options);
 
 // Функція для переведення мілісекунд в об'єкт {days, hours, minutes, seconds}
-function convertMs(ms) {
-  const second = 1000;
-  const minute = second * 60;
-  const hour = minute * 60;
-  const day = hour * 24;
-
-  const days = Math.floor(ms / day);
-  const hours = Math.floor((ms % day) / hour);
-  const minutes = Math.floor(((ms % day) % hour) / minute);
-  const seconds = Math.floor((((ms % day) % hour) % minute) / second);
-
-  return { days, hours, minutes, seconds };
-}
-
-// Обробник події кліку на кнопці "Start"
-document.querySelector('[data-start]').addEventListener('click', function () {
-  // Отримання вибраної дати
-  const selectedDate = userSelectedDate;
-
-  // Отримання поточної дати та часу
-  const currentDate = new Date();
-
-  // Розрахунок різниці між вибраною датою та поточною в мілісекундах
-  let timeDiff = selectedDate.getTime() - currentDate.getTime();
-
-  // Оновлення інтерфейсу таймера та запуск таймера
-  function updateTimer() {
-    const timeRemaining = convertMs(timeDiff);
-
-    // Оновлення відображення таймера
-    document.querySelector('[data-days]').textContent = addLeadingZero(
-      timeRemaining.days
-    );
-    document.querySelector('[data-hours]').textContent = addLeadingZero(
-      timeRemaining.hours
-    );
-    document.querySelector('[data-minutes]').textContent = addLeadingZero(
-      timeRemaining.minutes
-    );
-    document.querySelector('[data-seconds]').textContent = addLeadingZero(
-      timeRemaining.seconds
-    );
-
-    // Перевірка на завершення таймера
-    if (timeDiff <= 0) {
-      clearInterval(timerInterval); // Зупиняємо таймер
-      document.querySelector('[data-start]').disabled = false; // Активуємо кнопку "Start"
-      document.getElementById('datetime-picker').disabled = false; // Активуємо поле введення
-      return;
-    }
-
-    timeDiff -= 1000; // Зменшуємо різницю на 1 секунду
-  }
-
-  // Перша відправка запуску таймера
-  updateTimer();
-
-  // Запуск таймера кожну секунду
-  const timerInterval = setInterval(updateTimer, 1000);
-
-  // Деактивація кнопки "Start" та поля введення
-  document.querySelector('[data-start]').disabled = true;
-  document.getElementById('datetime-picker').disabled = true;
-});
-
 function addLeadingZero(value) {
   return String(value).padStart(2, '0');
 }
